@@ -1,0 +1,66 @@
+public static void DisplayComebackWins(List<Match> matches)
+{
+    var comebackMatches = matches.Where(m => (m.HomeGoalsHalfTime < m.AwayGoalsHalfTime && m.HomeGoals > m.AwayGoals) ||
+                                              (m.AwayGoalsHalfTime < m.HomeGoalsHalfTime && m.AwayGoals > m.HomeGoals));
+
+    foreach (var match in comebackMatches)
+    {
+        string winningTeam = match.HomeGoals > match.AwayGoals ? match.HomeTeam : match.AwayTeam;
+        Console.WriteLine($"Round {match.Round}: {winningTeam} won after being behind at halftime.");
+    }
+}
+
+
+
+public static void DisplayTeamMatches(List<Match> matches, string teamName)
+{
+    var teamMatches = matches.Where(m => m.HomeTeam == teamName || m.AwayTeam == teamName);
+
+    foreach (var match in teamMatches)
+    {
+        Console.WriteLine($"Round {match.Round}: {match.HomeTeam} vs {match.AwayTeam}, Score: {match.HomeGoals}-{match.AwayGoals}");
+    }
+}
+
+
+Console.Write("Enter team name: ");
+string teamName = Console.ReadLine();
+DisplayTeamMatches(matches, teamName);
+
+
+public static void DisplayTeamGoals(List<Match> matches, string teamName)
+{
+    int goalsScored = 0;
+    int goalsConceded = 0;
+
+    foreach (var match in matches)
+    {
+        if (match.HomeTeam == teamName)
+        {
+            goalsScored += match.HomeGoals;
+            goalsConceded += match.AwayGoals;
+        }
+        else if (match.AwayTeam == teamName)
+        {
+            goalsScored += match.AwayGoals;
+            goalsConceded += match.HomeGoals;
+        }
+    }
+
+    Console.WriteLine($"Goals scored: {goalsScored}, Goals conceded: {goalsConceded}");
+}
+
+
+public static void DisplayFirstHomeConcededMatch(List<Match> matches, string teamName)
+{
+    var homeConcededMatch = matches.FirstOrDefault(m => m.HomeTeam == teamName && m.AwayGoals > 0);
+
+    if (homeConcededMatch != null)
+    {
+        Console.WriteLine($"First match where {teamName} conceded at home was in round {homeConcededMatch.Round} against {homeConcededMatch.AwayTeam}.");
+    }
+    else
+    {
+        Console.WriteLine($"{teamName} never conceded at home.");
+    }
+}
